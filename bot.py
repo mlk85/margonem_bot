@@ -17,7 +17,6 @@ class MargonemBot:
         self.server = server
         self.logger.log_event('Bot started.')
 
-
     def _configure_options(self):
         base_path = os.getcwd()
         profile_path = os.path.join(base_path, "chrome_bot_profile")
@@ -41,25 +40,15 @@ class MargonemBot:
         """
     })
 
-    def close_battle(self):
-        try:
-            loot_button = self.driver.find_element(By.ID, 'loots_button')
-            if loot_button.is_displayed():
-                loot_button.click()
-                time.sleep(0.5)
-                self.logger.log_event('Loot window closed.')
-        except NoSuchElementException:
-            pass
-        try:
-            close_button = self.driver.find_element(By.ID, 'battleclose')
-            if close_button.is_displayed():
-                close_button.click()
-                self.logger.log_event('Battle window closed.')
-        except NoSuchElementException:
-            pass
-
     def go_to_main_page(self):
         self.driver.get('https://www.margonem.pl')
+        self.logger.log_event('Main page displayed.')
+
+    def log_in(self):
+        while self.server not in self.driver.current_url:
+            time.sleep(1)
+        self.logger.log_event('Game started.')
+        time.sleep(3)
 
     def open_game(self):
         self.driver.get(f"https://{self.server}.margonem.pl")
@@ -75,5 +64,23 @@ class MargonemBot:
         except NoSuchElementException:
                 time.sleep(1)
 
+    def close_loot_window(self):
+        try:
+            loot_button = self.driver.find_element(By.ID, 'loots_button')
+            if loot_button.is_displayed():
+                loot_button.click()
+                self.logger.log_event('Loot window closed.')
+        except NoSuchElementException:
+            pass
+
+
+    def close_battle(self):
+        try:
+            close_button = self.driver.find_element(By.ID, 'battleclose')
+            if close_button.is_displayed():
+                close_button.click()
+                self.logger.log_event('Battle window closed.')
+        except NoSuchElementException:
+            pass
 
 
