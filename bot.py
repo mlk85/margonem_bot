@@ -6,6 +6,7 @@ from selenium.common import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
+
 class MargonemBot:
     def __init__(self, npc_id, server, logger):
         self.logger = logger
@@ -61,8 +62,20 @@ class MargonemBot:
             npc.click()
             self.logger.log_event('NPC Attacked.')
             time.sleep(1.5)
+            self._auto_battle()
         except NoSuchElementException:
                 time.sleep(1)
+
+    def _auto_battle(self):
+        try:
+            auto_battle_button = self.driver.find_element(By.ID, "autobattleButton")
+            if auto_battle_button.is_displayed():
+                auto_battle_button.click()
+                self.logger.log_event('Auto-fight enabled.')
+                time.sleep(3)
+        except NoSuchElementException:
+            pass
+
 
     def close_loot_window(self):
         try:
@@ -72,7 +85,6 @@ class MargonemBot:
                 self.logger.log_event('Loot window closed.')
         except NoSuchElementException:
             pass
-
 
     def close_battle(self):
         try:
