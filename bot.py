@@ -1,8 +1,9 @@
 import time
 import os
+import random
 
 from selenium import webdriver
-from selenium.common import NoSuchElementException
+from selenium.common import NoSuchElementException, StaleElementReferenceException, ElementClickInterceptedException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
@@ -59,23 +60,31 @@ class MargonemBot:
     def hunt_npc(self):
         try:
             npc = self.driver.find_element(by=By.ID, value=self.npc_to_track)
+            time.sleep(random.uniform(0.05, 0.2))
             npc.click()
-            self.logger.log_event('NPC Attacked.')
-            time.sleep(1.5)
+            self.logger.log_event('NPC Found.')
+            time.sleep(random.uniform(1.85, 2.25))
+            self.driver.find_element(by=By.ID, value=self.npc_to_track).click()
+            self.logger.log_event(f'NPC Attacked.')
             self._auto_battle()
-        except NoSuchElementException:
-                time.sleep(1)
+        except (NoSuchElementException, StaleElementReferenceException, ElementClickInterceptedException) as e:
+            if isinstance(e, StaleElementReferenceException):
+                self.logger.log_event(f"Battle Error: {e}")
+            elif isinstance(e, ElementClickInterceptedException):
+                self._auto_battle()
+            time.sleep(1)
 
     def _auto_battle(self):
         try:
             auto_battle_button = self.driver.find_element(By.ID, "autobattleButton")
             if auto_battle_button.is_displayed():
+                self.logger.log_event('Fight Started.')
+                time.sleep(random.uniform(1.5, 2.3))
                 auto_battle_button.click()
                 self.logger.log_event('Auto-fight enabled.')
                 time.sleep(3)
         except NoSuchElementException:
             pass
-
 
     def close_loot_window(self):
         try:
@@ -94,5 +103,3 @@ class MargonemBot:
                 self.logger.log_event('Battle window closed.')
         except NoSuchElementException:
             pass
-
-
