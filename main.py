@@ -13,5 +13,6 @@ if __name__ == '__main__':
             margonem_bot.open_game()
         while True:
             margonem_bot.hunt_npc()
+            margonem_bot.solve_captcha()
     except Exception as e:
         print(f"Error: {e}")
