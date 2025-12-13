@@ -16,3 +16,4 @@ if __name__ == '__main__':
             margonem_bot.solve_captcha()
     except Exception as e:
         print(f"Error: {e}")
+        margonem_bot.logger.log_event(f"Critical Error: {e}")
